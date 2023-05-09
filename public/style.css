@@ -1,0 +1,44 @@
+.selected {
+  background-color: aquamarine;
+}
+li {
+  list-style: none;
+}
+ul {
+  padding: 0;
+  margin: 0;
+}
+.ingredient {
+  padding-left: 40px;
+}
+.category {
+  
+}
+.container {
+  height: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+}
+.header {
+  height: 100px;
+  background-color: darkolivegreen;
+  margin-bottom: 20px;
+}
+.column {
+  min-width: 50%;
+}
+.item{
+  height: 400px;
+  width: 400px;
+}
+.item-image{
+  height: 100px;
+  width: 100px;
+}
+.item-name{
+
+}
+.item-description{
+
+}
