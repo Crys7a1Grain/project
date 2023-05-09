@@ -130,6 +130,6 @@ app.post("/search", (req, res) => {
 //   res.render('recipe', { recipe: rows[0] });
 // });
 
-app.listen(8080, () => {
-  console.log("Server started on port 8080");
+app.listen(80, () => {
+  console.log("Server started on port 80");
 });
