@@ -3,11 +3,11 @@ const express = require("express");
 const fs = require("fs");
 
 const pool = mariadb.createPool({
-  host: "127.0.0.1",
+  host: "localhost",
   port: 3306,
   database: "recipes_finder",
   user: "root",
-  password: "bitnamiwamp",
+  password: "bitnamiwamp"
 });
 
 const app = express();
