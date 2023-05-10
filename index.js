@@ -7,7 +7,7 @@ const pool = mariadb.createPool({
   port: 3306,
   database: "recipes_finder",
   user: "root",
-  password: "bitnamiwamp"
+  password: "bitnamiwamp",
 });
 
 const app = express();
@@ -46,25 +46,29 @@ app.post("/search", (req, res) => {
   const sql = fs.readFileSync("query.sql", "utf8");
   pool.getConnection((err, connection) => {
     if (err) throw err;
+
+    //const id_recipes = results.map((row) => row.id);
+    //connection.release(); // освободить соединение обратно в пул
+    //if (err) throw err; //id_recipes внизу
+    //const sql = `SELECT name, description, image FROM recipes WHERE id IN (?)`;
     connection.query(sql, [ingredients], (err, results) => {
-      const id_recipes = results.map((row) => row.id);
-      connection.release(); // освободить соединение обратно в пул
-      if (err) throw err;
-      const sql = `SELECT name, description, image FROM recipes WHERE id IN (?)`;
-      connection.query(sql, [id_recipes], (err, results) => {
+      console.log("results = " + results);
+      if (results == undefined || results == 0) {
+        res.json({ message: "Рецепты не найдены по данным ингредиентам." });
+      } else {
         const recipes = results.map((row) => {
-          const image = row.image.toString('base64');
+          const image = row.image.toString("base64");
           return {
             name: row.name,
             description: row.description,
-            image: image
+            image: image,
           };
         });
-        connection.release(); // освободить соединение обратно в пул
-        if (err) throw err;
         console.log(recipes);
         res.json(recipes); //res.send(JSON.stringify(recipes));
-      });
+      }
+      connection.release(); // освободить соединение обратно в пул
+      if (err) throw err;
     });
   });
 });

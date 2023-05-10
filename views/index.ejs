@@ -10,47 +10,51 @@
   </head>
   <body>
     <header class="header">
-      <div class="container" style="align-items: center;">
-        <p style="color: aliceblue; font-size: 22px;">Поиск рецептов по ингредиентам</p>
+      <div class="container" style="align-items: center">
+        <h1 class="title">Поиск рецептов по ингредиентам</h1>
       </div>
     </header>
 
     <div class="main">
       <div class="container">
-        <div class="column">
-          <form id="search-form">
-            <% ingredients.forEach((ingredient) => { %>
-            <input
-              type="hidden"
-              name="ingredients[]"
-              value="<%= ingredient.id %>"
-            />
-            <% }); %>
-            <button type="submit">Найти</button>
-            <button id="clearButton">Очистить</button>
-          </form>
+        <div class="column1">
+          <div class="form">
+            <form id="search-form">
+              <% ingredients.forEach((ingredient) => { %>
+              <input
+                type="hidden"
+                name="ingredients[]"
+                value="<%= ingredient.id %>"
+              />
+              <% }); %>
+              <button type="submit">Найти</button>
+            </form>
+            <button type="button" id="clearButton" style="margin-bottom: 20px">
+              Очистить
+            </button>
+          </div>
 
           <div>
             <% const excludedIds = [44, 45, 46]; %> <%
             categories.forEach((category) => { %>
-            <li class="category">
+            <div class="category">
               <%= category.name %>
-              <ul>
+              <div class="wrapper">
                 <% ingredients = ingredients.filter(ingredient =>
                 !excludedIds.includes(ingredient.id))
                 ingredients.forEach((ingredient) => { if (ingredient.category_id
                 === category.id) { %>
-                <li class="ingredient" data-id="<%= ingredient.id %>">
+                <div class="ingredient" data-id="<%= ingredient.id %>">
                   <%= ingredient.name %>
-                </li>
+                </div>
                 <% } %> <% }); %>
-              </ul>
-            </li>
+              </div>
+            </div>
             <% }); %>
           </div>
         </div>
 
-        <div class="column">
+        <div class="column2">
           <h3>Результаты поиска:</h3>
           <ul id="myList"></ul>
         </div>

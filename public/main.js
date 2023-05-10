@@ -44,33 +44,42 @@ searchForm.addEventListener("click", (event) => {
   })
     .then((response) => response.json())
     .then(function (data) {
+      if (data.message) {
+        const message = document.createElement("p");
+        message.textContent = data.message;
+        searchResult.appendChild(message);
+        searchResult.innerHTML = "";
+      } else {
+        console.log(data);
 
-      console.log(data);
+        searchResult.innerHTML = "";
 
-      searchResult.innerHTML = "";
+        data.forEach((recipe) => {
+          const item = document.createElement("div");
+          item.classList.add("item");
 
-      data.forEach((recipe) => {
-        const item = document.createElement('div');
-        item.classList.add("item");
+          const image = document.createElement("img");
+          image.src = "data:image/jpg;base64," + recipe.image;
+          image.classList.add("item-image");
 
-        const image = document.createElement('img');
-        image.src = "data:image/jpg;base64," + recipe.image;
-        image.classList.add("item-image");
+          const box = document.createElement("div");
+          box.classList.add("item-box");
 
-        const name = document.createElement('p');
-        name.classList.add("item-name");
-        name.textContent = recipe.name;
+          const name = document.createElement("p");
+          name.classList.add("item-name");
+          name.textContent = recipe.name;
 
-        const description = document.createElement('p');
-        description.classList.add("item-description");
-        description.textContent = recipe.description;
+          const description = document.createElement("p");
+          description.classList.add("item-description");
+          description.textContent = recipe.description;
 
-        item.appendChild(image);
-        item.appendChild(name);
-        item.appendChild(description);
-        searchResult.appendChild(item);
-      })
-
+          item.appendChild(image);
+          item.appendChild(box);
+          box.appendChild(name);
+          box.appendChild(description);
+          searchResult.appendChild(item);
+        });
+      }
       // const listItems = data.map((item) => {
       //   const li = document.createElement("li");
       //   li.textContent = item.name;
