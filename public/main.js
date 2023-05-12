@@ -48,7 +48,6 @@ searchForm.addEventListener("click", (event) => {
         const message = document.createElement("p");
         message.textContent = data.message;
         searchResult.appendChild(message);
-        searchResult.innerHTML = "";
       } else {
         console.log(data);
 
@@ -59,8 +58,8 @@ searchForm.addEventListener("click", (event) => {
           item.classList.add("item");
 
           const image = document.createElement("img");
-          image.src = "data:image/jpg;base64," + recipe.image;
           image.classList.add("item-image");
+          image.src = "data:image/jpg;base64," + recipe.image;
 
           const box = document.createElement("div");
           box.classList.add("item-box");
@@ -72,6 +71,12 @@ searchForm.addEventListener("click", (event) => {
           const description = document.createElement("p");
           description.classList.add("item-description");
           description.textContent = recipe.description;
+
+          const recipeButton = document.createElement("button");
+          recipeButton.addEventListener('click', () => {
+            const recipeURL = 'https://example.com/recipe'; // Замените на реальный URL рецепта
+            window.open(recipeURL, '_blank');
+          });
 
           item.appendChild(image);
           item.appendChild(box);

@@ -40,8 +40,9 @@ app.get("/", (req, res) => {
 });
 
 app.post("/search", (req, res) => {
-  console.log("req.body.ingredients = " + req.body.ingredients);
-  const ingredients = req.body.ingredients.toString().split(",").map(Number);
+  //console.log("req.body.ingredients = " + req.body.ingredients);
+  //const ingredients = req.body.ingredients.toString().split(",").map(Number);
+  const ingredients = req.body.ingredients;
   console.log("ingredients = " + ingredients);
   const sql = fs.readFileSync("query.sql", "utf8");
   pool.getConnection((err, connection) => {
@@ -53,7 +54,7 @@ app.post("/search", (req, res) => {
     //const sql = `SELECT name, description, image FROM recipes WHERE id IN (?)`;
     connection.query(sql, [ingredients], (err, results) => {
       console.log("results = " + results);
-      if (results == undefined || results == 0) {
+      if ((results === undefined) || (results === " ") || (results.length === 0)) {
         res.json({ message: "Рецепты не найдены по данным ингредиентам." });
       } else {
         const recipes = results.map((row) => {
