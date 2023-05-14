@@ -3,8 +3,9 @@
 html {
   font-family: "Ubuntu", sans-serif;
 }
-.selected {
-  background-color: rgba(133, 235, 140, 0.7);
+a {
+  color: #ffffff;
+  text-decoration: none;
 }
 p {
   margin: 0;
@@ -15,6 +16,9 @@ li {
 ul {
   padding: 0;
   margin: 0;
+}
+.selected {
+  background-color: rgba(133, 235, 140, 0.7);
 }
 .category {
   /* width: 360px; */
@@ -53,8 +57,9 @@ ul {
 }
 .header {
   height: 100px;
-  background-color: darkolivegreen;
   margin-bottom: 30px;
+  background-color: darkolivegreen;
+  color: aliceblue;
 }
 .column1 {
   width: 35%;
@@ -64,7 +69,6 @@ ul {
   width: 65%;
 }
 .title {
-  color: aliceblue;
   font-size: 22px;
 }
 .form {
