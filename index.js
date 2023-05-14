@@ -3,7 +3,7 @@ const express = require("express");
 const fs = require("fs");
 
 const pool = mariadb.createPool({
-  host: "localhost",
+  host: "127.0.0.1",
   port: 3306,
   database: "recipes_finder",
   user: "root",
@@ -42,12 +42,12 @@ app.get("/", (req, res) => {
 app.post("/search", (req, res) => {
   //console.log("req.body.ingredients = " + req.body.ingredients);
   //const ingredients = req.body.ingredients.toString().split(",").map(Number);
+  const start = new Date();
   const ingredients = req.body.ingredients;
   console.log("ingredients = " + ingredients);
   const sql = fs.readFileSync("query.sql", "utf8");
   pool.getConnection((err, connection) => {
     if (err) throw err;
-
     //const id_recipes = results.map((row) => row.id);
     //connection.release(); // освободить соединение обратно в пул
     //if (err) throw err; //id_recipes внизу
@@ -70,6 +70,9 @@ app.post("/search", (req, res) => {
       }
       connection.release(); // освободить соединение обратно в пул
       if (err) throw err;
+      const end = new Date();
+      const delta = end - start;
+      console.log(`request on server was served in ${delta} ms`);
     });
   });
 });
@@ -135,6 +138,6 @@ app.post("/search", (req, res) => {
 //   res.render('recipe', { recipe: rows[0] });
 // });
 
-app.listen(80, () => {
-  console.log("Server started on port 80");
+app.listen(8080, () => {
+  console.log("Server started on port 8080");
 });

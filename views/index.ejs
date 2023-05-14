@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Поиск рецептов</title>
     <link rel="stylesheet" href="/normalize.css" />
     <link rel="stylesheet" href="/style.css" />
   </head>
@@ -12,6 +12,7 @@
     <header class="header">
       <div class="container" style="align-items: center">
         <h1 class="title">Поиск рецептов по ингредиентам</h1>
+        <a href="/views/recipes.ejs">Рецепты</a>
       </div>
     </header>
 
@@ -19,6 +20,9 @@
       <div class="container">
         <div class="column1">
           <div class="form">
+            <button class="clearButton form-button" type="button" >
+              Очистить
+            </button>
             <form id="search-form">
               <% ingredients.forEach((ingredient) => { %>
               <input
@@ -27,24 +31,18 @@
                 value="<%= ingredient.id %>"
               />
               <% }); %>
-              <button type="submit">Найти</button>
+              <button class="form-button" type="submit">Найти</button>
             </form>
-            <button type="button" id="clearButton" style="margin-bottom: 20px">
-              Очистить
-            </button>
           </div>
 
           <div>
-            <% const excludedIds = [44, 45, 46]; %> <%
-            categories.forEach((category) => { %>
+            <% categories.forEach((category) => { %>
             <div class="category">
               <p class="category-name"><%= category.name %></p>
               <div class="divider"></div>
               <div class="wrapper">
-                <% ingredients = ingredients.filter(ingredient =>
-                !excludedIds.includes(ingredient.id))
-                ingredients.forEach((ingredient) => { if (ingredient.category_id
-                === category.id) { %>
+                <% ingredients.forEach((ingredient) => { if
+                (ingredient.category_id === category.id) { %>
                 <div class="ingredient" data-id="<%= ingredient.id %>">
                   <%= ingredient.name %>
                 </div>
@@ -56,8 +54,8 @@
         </div>
 
         <div class="column2">
-          <h3>Результаты поиска:</h3>
-          <ul id="myList"></ul>
+          <h3 style="margin-top: 0;">Результаты поиска:</h3>
+          <ul class="myList"></ul>
         </div>
       </div>
     </div>

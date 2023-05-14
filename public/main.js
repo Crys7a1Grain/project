@@ -1,7 +1,18 @@
 const ingredientsList = document.querySelectorAll(".ingredient");
+const searchForm = document.getElementById("search-form");
 const selectedIngredients = ["44", "45", "46"];
-const searchResult = document.getElementById("myList");
-const clearButton = document.querySelector("#clearButton");
+const preselectedIngredients = ["44", "45", "46"];
+const searchResult = document.querySelector(".myList");
+const clearButton = document.querySelector(".clearButton");
+
+document.addEventListener("DOMContentLoaded", function () {
+  selectedIngredients.forEach(function (ingredientId) {
+    const ingredientElement = document.querySelector(
+      `.ingredient[data-id="${ingredientId}"]`
+    );
+    ingredientElement.classList.add("selected");
+  });
+});
 
 clearButton.addEventListener("click", (event) => {
   event.preventDefault();
@@ -10,6 +21,18 @@ clearButton.addEventListener("click", (event) => {
   // снимаем выделение со всех выбранных ингредиентов
   ingredientsList.forEach((ingredient) => {
     ingredient.classList.remove("selected");
+  });
+
+  preselectedIngredients.forEach((ingredient) => {
+    selectedIngredients.push(ingredient);
+  });
+
+  // Повторно выделяем ингредиенты из preselectedIngredients
+  preselectedIngredients.forEach(function (ingredientId) {
+    const ingredientElement = document.querySelector(
+      `.ingredient[data-id="${ingredientId}"]`
+    );
+    ingredientElement.classList.add("selected");
   });
 });
 
@@ -32,7 +55,6 @@ ingredientsList.forEach((ingredient) => {
 
 const dataToServer = { ingredients: selectedIngredients };
 
-const searchForm = document.getElementById("search-form");
 searchForm.addEventListener("click", (event) => {
   event.preventDefault();
   fetch("/search", {
@@ -45,6 +67,7 @@ searchForm.addEventListener("click", (event) => {
     .then((response) => response.json())
     .then(function (data) {
       if (data.message) {
+        searchResult.innerHTML = "";
         const message = document.createElement("p");
         message.textContent = data.message;
         searchResult.appendChild(message);
@@ -52,6 +75,8 @@ searchForm.addEventListener("click", (event) => {
         console.log(data);
 
         searchResult.innerHTML = "";
+
+        const fragment = document.createDocumentFragment();
 
         data.forEach((recipe) => {
           const item = document.createElement("div");
@@ -73,18 +98,24 @@ searchForm.addEventListener("click", (event) => {
           description.textContent = recipe.description;
 
           const recipeButton = document.createElement("button");
-          recipeButton.addEventListener('click', () => {
-            const recipeURL = 'https://example.com/recipe'; // Замените на реальный URL рецепта
-            window.open(recipeURL, '_blank');
+          recipeButton.classList.add("item-button");
+          recipeButton.textContent = "Посмотреть рецепт";
+          recipeButton.addEventListener("click", () => {
+            const recipeURL = "https://example.com/"; // Замените на реальный URL рецепта
+            window.open(recipeURL, "_blank");
           });
 
           item.appendChild(image);
           item.appendChild(box);
           box.appendChild(name);
           box.appendChild(description);
-          searchResult.appendChild(item);
+          box.appendChild(recipeButton);
+
+          fragment.appendChild(item);
         });
+        searchResult.appendChild(fragment);
       }
+
       // const listItems = data.map((item) => {
       //   const li = document.createElement("li");
       //   li.textContent = item.name;
