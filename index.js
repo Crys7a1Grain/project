@@ -21,14 +21,14 @@ app.get("/", (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) throw err;
     connection.query("SELECT * FROM ingredients", (err, results) => {
-      const ingredients = results;
       connection.release(); // освободить соединение обратно в пул
       if (err) throw err;
+      const ingredients = results;
       connection.query(
         "SELECT * FROM ingredient_categories",
         (err, results) => {
-          const categories = results;
           if (err) throw err;
+          const categories = results;
           res.render("index.ejs", {
             ingredients: ingredients,
             categories: categories,
@@ -53,13 +53,15 @@ app.post("/search", (req, res) => {
     //if (err) throw err; //id_recipes внизу
     //const sql = `SELECT name, description, image FROM recipes WHERE id IN (?)`;
     connection.query(sql, [ingredients], (err, results) => {
+      if (err) throw err;
       console.log("results = " + results);
-      if ((results === undefined) || (results === " ") || (results.length === 0)) {
+      if (results === undefined || results === " " || results.length === 0) {
         res.json({ message: "Рецепты не найдены по данным ингредиентам." });
       } else {
         const recipes = results.map((row) => {
           const image = row.image.toString("base64");
           return {
+            id: row.id,
             name: row.name,
             description: row.description,
             image: image,
@@ -69,7 +71,6 @@ app.post("/search", (req, res) => {
         res.json(recipes); //res.send(JSON.stringify(recipes));
       }
       connection.release(); // освободить соединение обратно в пул
-      if (err) throw err;
       const end = new Date();
       const delta = end - start;
       console.log(`request on server was served in ${delta} ms`);
@@ -77,66 +78,59 @@ app.post("/search", (req, res) => {
   });
 });
 
-// app.get('/', (req, res) => {
-//   pool.getConnection((err, connection) => {
-//     if (err) throw err;
-//     connection.query('SELECT * FROM ingredients', (err, results) => {
-//       const ingredients = results;
-//       connection.release(); // освободить соединение обратно в пул
-//       if (err) throw err;
-//       connection.query('SELECT * FROM ingredient_categories', (err, results) => {
-//         const categories = results;
-//         if (err) throw err;
-//         connection.release(); // освободить соединение обратно в пул
-//         res.render('index.ejs', { ingredients: ingredients, categories: categories });
-//       });
-//     });
-//   });
-// });
+app.get("/recipes", (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) throw err;
+    connection.query(
+      "SELECT * FROM recipes",
+      (err, results) => {
+        if (err) throw err;
+        const recipes = results.map((row) => {
+          const image = row.image.toString("base64");
+          return {
+            id: row.id,
+            name: row.name,
+            description: row.description,
+            image: image,
+          };
+        });
+        connection.release(); // освободить соединение обратно в пул
+        //res.json(recipes);
+        res.render("recipes.ejs", { recipes: recipes });
+      }
+    );
+  });
+});
 
-// app.get('/search', (req, res) => {
-//   const ingredients = req.query.ingredients.split(',');
-//   //const ingredients = req.query.ingredients;
-//   //console.log(ingredients);
-
-//   const sql = fs.readFileSync('query.sql', 'utf8');
-//   //console.log(sql); // вывод содержимого файла в консоль
-
-//   pool.getConnection((err, connection) => {
-//     if (err) throw err;
-//     connection.query(sql, [ingredients], (err, results) => {
-//       const id_recipes = results.map(row => row.id);
-//       console.log(id_recipes);
-//       connection.release(); // освободить соединение обратно в пул
-//       if (err) throw err;
-//       const sql = `SELECT name FROM recipes WHERE id IN (?)`;
-//       connection.query(sql, [id_recipes], (err, results) => {
-//         connection.release(); // освободить соединение обратно в пул
-//         if (err) throw err;
-//         res.render('search.ejs', { recipes: results});
-//       });
-//     });
-//   });
-// });
-
-// app.get('/recipes', (req, res) => {
-//   pool.getConnection((err, connection) => {
-//     if (err) throw err;
-//     connection.query('SELECT * FROM recipes', (err, results) => {
-//       connection.release(); // освободить соединение обратно в пул
-//       if (err) throw err;
-//       res.render('recipes', { recipes: results });
-//     });
-//   });
-// });
-
-// app.get('/recipe/:id', async (req, res) => {
-//   const id = req.params.id;
-//   const conn = await pool.getConnection();
-//   const rows = await conn.query(`SELECT * FROM recipes WHERE id=${id}`);
-//   conn.release();
-//   res.render('recipe', { recipe: rows[0] });
-// });
+app.get("/recipe/:id", (req, res) => {
+  const recipeId = req.params.id;
+  pool.getConnection((err, connection) => {
+    if (err) throw err;
+    connection.query(
+      "SELECT name, description, image, instructions FROM recipes WHERE id = ?",
+      [recipeId],
+      (err, results) => {
+        if (err) throw err;
+        if (results.length > 0) {
+          const recipe = results[0];
+          const image = recipe.image.toString("base64");
+          const data = {
+            name: recipe.name,
+            description: recipe.description,
+            image: image,
+            instructions: recipe.instructions
+          };
+          res.render("recipe.ejs", { recipe: data });
+        } else {
+          res.status(404).send("Рецепт не найден");
+          return;
+          //res.render("error", { message: "Рецепт не найден" });
+        }
+        connection.release();
+      }
+    );
+  });
+});
 
 app.listen(80, () => {
   console.log("Server started on port 80");

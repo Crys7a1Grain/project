@@ -5,6 +5,10 @@ const preselectedIngredients = ["44", "45", "46"];
 const searchResult = document.querySelector(".myList");
 const clearButton = document.querySelector(".clearButton");
 
+function openRecipePage(recipeId) {
+  window.open(`/recipe/${recipeId}`, "_blank");
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   selectedIngredients.forEach(function (ingredientId) {
     const ingredientElement = document.querySelector(
@@ -99,11 +103,11 @@ searchForm.addEventListener("click", (event) => {
 
           const recipeButton = document.createElement("button");
           recipeButton.classList.add("item-button");
+          //recipeButton.onclick = openRecipePage(recipe.id);
+          recipeButton.onclick = function() {
+            openRecipePage(recipe.id);
+          };
           recipeButton.textContent = "Посмотреть рецепт";
-          recipeButton.addEventListener("click", () => {
-            const recipeURL = "https://example.com/"; // Замените на реальный URL рецепта
-            window.open(recipeURL, "_blank");
-          });
 
           item.appendChild(image);
           item.appendChild(box);
