@@ -10,15 +10,17 @@
   </head>
   <body>
     <header class="header">
-      <div class="container" style="align-items: center; gap: 200px">
-        <h1 class="title">Поиск рецептов по ингредиентам</h1>
-        <a class="title" href="/recipes">Рецепты</a>
+      <div class="container">
+        <div class="header-content">
+          <a class="title header-title" href="/">Поиск рецептов по ингредиентам</a>
+          <a class="title header-title" href="/recipes">Рецепты</a>
+        </div>
       </div>
     </header>
 
     <div class="main">
       <div class="container">
-        <div>
+        <div class="main-content">
           <img
             class="item-image"
             src="data:image/jpg;base64,<%= recipe.image %>"
@@ -26,7 +28,8 @@
           />
           <div class="item-box">
             <p class="item-name"><%= recipe.name %></p>
-            <p class="item-description"><%= recipe.description %></p>
+            <p class="item-description recipe-margin"><%= recipe.description %></p>
+            <p class="instructions-title">Инструкция приготовления:</p>
             <% recipe.instructions.split('\\n').forEach((instruction) => { %>
               <% const cleanInstruction = instruction.trim(); %>
               <% if (cleanInstruction) { %>
