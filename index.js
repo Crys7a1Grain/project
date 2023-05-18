@@ -3,7 +3,7 @@ const express = require("express");
 const fs = require("fs");
 
 const pool = mariadb.createPool({
-  host: "127.0.0.1",
+  host: "localhost",
   port: 3306,
   database: "recipes_finder",
   user: "root",
@@ -139,6 +139,6 @@ app.get("/recipe/:id", (req, res) => {
   });
 });
 
-app.listen(8080, () => {
-  console.log("Server started on port 8080");
+app.listen(80, () => {
+  console.log("Server started on port 80");
 });
