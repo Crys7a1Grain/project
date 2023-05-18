@@ -12,7 +12,9 @@
     <header class="header">
       <div class="container">
         <div class="header-content">
-          <a class="title header-title" href="/">Поиск рецептов по ингредиентам</a>
+          <a class="title header-title" href="/"
+            >Поиск рецептов по ингредиентам</a
+          >
           <a class="title header-title" href="/recipes">Рецепты</a>
         </div>
       </div>
@@ -22,20 +24,31 @@
       <div class="container">
         <div class="main-content">
           <img
-            class="item-image"
+            class="recipe-image"
             src="data:image/jpg;base64,<%= recipe.image %>"
             alt="<%= recipe.name %>"
           />
-          <div class="item-box">
+          <div class="content-box">
             <p class="item-name"><%= recipe.name %></p>
-            <p class="item-description recipe-margin"><%= recipe.description %></p>
+            <p class="item-description recipe-margin">
+              <%= recipe.description %>
+            </p>
+
+            <p class="ingredients-title">Ингредиенты на 3 порции:</p>
+            <ul class="ingredient-list">
+              <% recipe.ingredients.forEach((ingredient) => { %>
+              <li class="ingredient-item">
+                <%= ingredient.name %> - <%= ingredient.volume %>
+              </li>
+              <% }); %>
+            </ul>
+
             <p class="instructions-title">Инструкция приготовления:</p>
-            <% recipe.instructions.split('\\n').forEach((instruction) => { %>
-              <% const cleanInstruction = instruction.trim(); %>
-              <% if (cleanInstruction) { %>
-                <p class="item-instruction"><%= cleanInstruction %></p>
-              <% } %>
-            <% }); %>
+            <% recipe.instructions.split('\\n').forEach((instruction) => { %> <%
+            const cleanInstruction = instruction.trim(); %> <% if
+            (cleanInstruction) { %>
+            <p class="item-instruction"><%= cleanInstruction %></p>
+            <% } %> <% }); %>
           </div>
         </div>
       </div>

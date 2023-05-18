@@ -104,7 +104,7 @@ searchForm.addEventListener("click", (event) => {
           const recipeButton = document.createElement("button");
           recipeButton.classList.add("item-button");
           //recipeButton.onclick = openRecipePage(recipe.id);
-          recipeButton.onclick = function() {
+          recipeButton.onclick = function () {
             openRecipePage(recipe.id);
           };
           recipeButton.textContent = "Посмотреть рецепт";
@@ -116,8 +116,8 @@ searchForm.addEventListener("click", (event) => {
           box.appendChild(recipeButton);
 
           fragment.appendChild(item);
+          searchResult.appendChild(fragment);
         });
-        searchResult.appendChild(fragment);
       }
 
       // const listItems = data.map((item) => {

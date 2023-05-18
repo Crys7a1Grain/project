@@ -3,7 +3,7 @@ const express = require("express");
 const fs = require("fs");
 
 const pool = mariadb.createPool({
-  host: "localhost",
+  host: "127.0.0.1",
   port: 3306,
   database: "recipes_finder",
   user: "root",
@@ -81,57 +81,64 @@ app.post("/search", (req, res) => {
 app.get("/recipes", (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) throw err;
-    connection.query(
-      "SELECT * FROM recipes",
-      (err, results) => {
-        if (err) throw err;
-        const recipes = results.map((row) => {
-          const image = row.image.toString("base64");
-          return {
-            id: row.id,
-            name: row.name,
-            description: row.description,
-            image: image,
-          };
-        });
-        connection.release(); // освободить соединение обратно в пул
-        //res.json(recipes);
-        res.render("recipes.ejs", { recipes: recipes });
-      }
-    );
+    connection.query("SELECT * FROM recipes", (err, results) => {
+      if (err) throw err;
+      const recipes = results.map((row) => {
+        const image = row.image.toString("base64");
+        return {
+          id: row.id,
+          name: row.name,
+          description: row.description,
+          image: image,
+        };
+      });
+      connection.release(); // освободить соединение обратно в пул
+      //res.json(recipes);
+      res.render("recipes.ejs", { recipes: recipes });
+    });
   });
 });
 
 app.get("/recipe/:id", (req, res) => {
   const recipeId = req.params.id;
+  const recipeQuery = fs.readFileSync("recipeQuery.sql", "utf8");
+  const ingredientsQuery = fs.readFileSync("ingredientsQuery.sql", "utf8");
   pool.getConnection((err, connection) => {
     if (err) throw err;
-    connection.query(
-      "SELECT name, description, image, instructions FROM recipes WHERE id = ?",
-      [recipeId],
-      (err, results) => {
-        if (err) throw err;
-        if (results.length > 0) {
-          const recipe = results[0];
-          const image = recipe.image.toString("base64");
-          const data = {
-            name: recipe.name,
-            description: recipe.description,
-            image: image,
-            instructions: recipe.instructions
-          };
-          res.render("recipe.ejs", { recipe: data });
-        } else {
-          res.status(404).send("Рецепт не найден");
-          return;
-          //res.render("error", { message: "Рецепт не найден" });
-        }
-        connection.release();
+    connection.query(recipeQuery, [recipeId], (err, results) => {
+      if (err) throw err;
+      if (results.length > 0) {
+        const recipe = results[0];
+        const image = recipe.image.toString("base64");
+
+        connection.query(
+          ingredientsQuery,
+          [recipeId],
+          (err, ingredientResults) => {
+            if (err) throw err;
+            const data = {
+              name: recipe.name,
+              description: recipe.description,
+              image: image,
+              instructions: recipe.instructions,
+              ingredients: ingredientResults.map((result) => ({
+                name: result.ingredient_name,
+                volume: result.volume,
+              })),
+            };
+            res.render("recipe.ejs", { recipe: data });
+          }
+        );
+      } else {
+        res.status(404).send("Рецепт не найден");
+        return;
+        //res.render("error", { message: "Рецепт не найден" });
       }
-    );
+      connection.release();
+    });
   });
 });
 
-app.listen(80, () => {
-  console.log("Server started on port 80");
+app.listen(8080, () => {
+  console.log("Server started on port 8080");
 });
