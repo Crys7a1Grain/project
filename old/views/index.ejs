@@ -12,7 +12,9 @@
     <header class="header">
       <div class="container">
         <div class="header-content">
-          <a class="title header-title" href="/">Поиск рецептов по ингредиентам</a>
+          <a class="title header-title" href="/"
+            >Поиск рецептов по ингредиентам</a
+          >
           <a class="title header-title" href="/recipes">Рецепты</a>
         </div>
       </div>
@@ -25,6 +27,7 @@
             <button class="clearButton form-button" type="button">
               Очистить
             </button>
+
             <form id="search-form">
               <% ingredients.forEach((ingredient) => { %>
               <input
@@ -36,7 +39,6 @@
               <button class="form-button" type="submit">Найти</button>
             </form>
           </div>
-
           <div>
             <% categories.forEach((category) => { %>
             <div class="category">

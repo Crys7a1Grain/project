@@ -7,7 +7,7 @@ const pool = mariadb.createPool({
   port: 3306,
   database: "recipes_finder",
   user: "root",
-  password: "bitnamiwamp",
+  password: "",
 });
 
 const app = express();
@@ -67,7 +67,6 @@ app.post("/search", (req, res) => {
             image: image,
           };
         });
-        console.log(recipes);
         res.json(recipes); //res.send(JSON.stringify(recipes));
       }
       connection.release(); // освободить соединение обратно в пул
@@ -139,6 +138,6 @@ app.get("/recipe/:id", (req, res) => {
   });
 });
 
-app.listen(80, () => {
-  console.log("Server started on port 80");
+app.listen(8080, () => {
+  console.log("Server started on port 8080");
 });

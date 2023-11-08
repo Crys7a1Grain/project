@@ -93,7 +93,7 @@ ul {
 .item {
   max-height: 350px;
   margin-bottom: 20px;
-  align-items: center;
+  align-items: flex-start;
   display: flex;
 }
 .item-image {
