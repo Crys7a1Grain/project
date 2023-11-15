@@ -19,7 +19,7 @@
           </form>
         </div>
         <ErrorDisplay
-          v-if="errorText.type === 'data-error'"
+          v-if="errorText.type === 'ingredients-error'"
           :errorMessage="errorText.message"
         />
         <div v-for="category in categories" :key="category.id" class="category">
@@ -50,7 +50,12 @@
             v-if="errorText.type === 'server-error'"
             :errorMessage="errorText.message"
           />
-          <div class="item" v-for="recipe in recipes" :key="recipe.id">
+          <div
+            class="item"
+            v-if="recipes"
+            v-for="recipe in recipes"
+            :key="recipe.id"
+          >
             <img
               class="item-image"
               :src="'data:image/jpeg;base64,' + recipe.image"
@@ -59,7 +64,7 @@
             <div class="item-box">
               <div class="item-name">{{ recipe.name }}</div>
               <div class="item-description">{{ recipe.description }}</div>
-              <button class="item-button" @click="viewRecipe(recipe.id)">
+              <button class="item-button" @click="openRecipePage(recipe.id)">
                 Посмотреть рецепт
               </button>
             </div>
@@ -119,12 +124,12 @@ const fetchIngredientsAndCategories = async () => {
       dataLoaded.value = true;
     } else {
       console.error('Ошибка загрузки данных с сервера');
-      errorText.value.type = 'data-error';
+      errorText.value.type = 'ingredients-error';
       errorText.value.message = 'Произошла ошибка при загрузке данных с сервера.';
     }
   } catch (error) {
     console.error('Произошла ошибка:', error);
-    errorText.value.type = 'data-error';
+    errorText.value.type = 'ingredients-error';
     errorText.value.message = 'Произошла неизвестная ошибка. Сервер не доступен.';
   }
 };
@@ -184,9 +189,11 @@ const clearForm = () => {
 
 const search = async () => {
   try {
+    errorText.value = { type: null, message: null };
+    recipes.value = [];
     const response = await fetch('http://localhost:8080/api/search', {
       method: 'POST',
-      body: JSON.stringify({ selectedIngredients }), //преобразуем в строку JSON
+      body: JSON.stringify({ selectedIngredients }),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -198,11 +205,13 @@ const search = async () => {
     }
     const data = await response.json();
     if (data.errorMessage) {
-      // обработка когда сервер вернул ошибку.
+      console.error('Произошла ошибка:', data.errorMessage);
+      errorText.value.type = 'server-error';
+      errorText.value.message = `Произошла ошибка на сервере: ${data.errorMessage}`;
+    } else {
+      recipes.value = data;
+      console.log('Данные с сервера:', recipes.value);
     }
-
-    recipes.value = data;
-    console.log('Данные с сервера:', recipes.value);
   } catch (error) {
     console.error('Произошла ошибка:', error);
     errorText.value.type = 'server-error';
@@ -211,7 +220,7 @@ const search = async () => {
   }
 };
 
-const viewRecipe = (recipeId: number) => {
+const openRecipePage = (recipeId: number) => {
   const recipeUrl = `http://localhost:5173/recipe/${recipeId}`;
   window.open(recipeUrl, '_blank');
 };
