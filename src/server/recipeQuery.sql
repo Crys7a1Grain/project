@@ -1,4 +1,5 @@
-SELECT r.name,
+SELECT r.id,
+  r.name,
   r.description,
   r.image,
   r.instructions
