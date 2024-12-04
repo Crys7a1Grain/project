@@ -79,13 +79,14 @@ ul {
 .form {
   margin-bottom: 20px;
   display: flex;
+  justify-content: space-between;
 }
 .form-button {
   font-size: 20px;
 }
-.clearButton {
+/* .clearButton {
   margin-right: auto;
-}
+} */
 .results {
   margin-top: 0;
   margin-bottom: 44px;

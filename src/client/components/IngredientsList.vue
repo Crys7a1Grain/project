@@ -7,6 +7,14 @@
             Очистить
           </button>
 
+          <button @click="openModal">Открыть модальное окно</button>
+          <div v-if="isModalOpen" class="modal">
+            <div class="modal-content">
+              <span class="close" @click="closeModal">&times;</span>
+              <p>Содержимое модального окна...</p>
+            </div>
+          </div>
+
           <form id="search-form" @submit.prevent="search">
             <input
               v-for="ingredient in ingredients"
@@ -15,6 +23,7 @@
               name="ingredients[]"
               :value="ingredient.id"
             />
+
             <button class="form-button" type="submit">Найти</button>
           </form>
         </div>
@@ -112,6 +121,14 @@ const recipes = ref<IRecipe[]>([]);
 const errorText = ref<IError>({ type: null, message: null });
 const dataLoaded: Ref<boolean> = ref(false);
 
+const isModalOpen = ref(false);
+const openModal = () => {
+  isModalOpen.value = true;
+};
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
 const fetchIngredientsAndCategories = async () => {
   try {
     const response = await fetch(
@@ -189,6 +206,11 @@ const clearForm = () => {
 
 const search = async () => {
   try {
+    if (selectedIngredients.length === 0) {
+      errorText.value.message =
+        'Пожалуйста выберите ингредиенты, имеющиеся у Вас в холодильнике!';
+      errorText.value.type = 'server-error';
+    }
     errorText.value = { type: null, message: null };
     recipes.value = [];
     const response = await fetch('http://localhost:8080/api/search', {
@@ -226,4 +248,40 @@ const openRecipePage = (recipeId: number) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 300px;
+  height: 300px;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
